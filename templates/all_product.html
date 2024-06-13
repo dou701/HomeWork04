@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品資料表</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>所有商品資料表</h2>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>編號</th> <!-- 對應到 sort -->
+                <th>類別</th> <!-- 對應到 category -->
+                <th>品牌</th> <!-- 對應到 brand -->
+                <th>機型</th> <!-- 對應到 model -->
+                <th>價格</th> <!-- 對應到 price -->
+                <th>庫存數量</th> <!-- 對應到 stock_quantity -->
+                <th>描述</th> <!-- 對應到 description -->
+                <th>規格</th> <!-- 對應到 specification -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in all_products %}
+            <tr>
+                <td>{{ product[0] }}</td> <!-- Assume product ID is in the first column -->
+                <td>{{ product[1] }}</td> <!-- Category -->
+                <td>{{ product[2] }}</td> <!-- Brand -->
+                <td>{{ product[3] }}</td> <!-- Model -->
+                <td>{{ product[4] }}</td> <!-- Price -->
+                <td>{{ product[5] }}</td> <!-- Stock Quantity -->
+                <td>{{ product[6] }}</td> <!-- Description -->
+                <td>{{ product[7] }}</td> <!-- Specification -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function editProduct() {
+            // Replace this with your logic for redirecting to the edit page
+            alert('Redirect to edit page or show edit form');
+        }
+
+        // Function to add a new product row
+        function addProductRow() {
+            var tableBody = document.querySelector('#productTable tbody');
+
+            // Create a new row
+            var newRow = document.createElement('tr');
+
+            // Calculate the next sort number
+            var currentRowCount = tableBody.rows.length; // Current number of rows
+            var nextSortNumber = pad(currentRowCount, 3); // Pad with zeros
+
+
+            // Append the new row to the table body
+            tableBody.appendChild(newRow);
+
+            // Update sort numbers for all rows
+            updateSortNumbers();
+        }
+
+        // Function to update sort numbers for all rows
+        function updateSortNumbers() {
+            var tableBody = document.querySelector('#productTable tbody');
+            var rows = tableBody.querySelectorAll('tr');
+
+            // Loop through each row to update the sort number
+            rows.forEach((row, index) => {
+                var sortCell = row.querySelector('td:first-child');
+                sortCell.textContent = pad(index, 3);
+            });
+        }
+
+        // Helper function to pad numbers with zeros
+        function pad(num, size) {
+            var s = num + "";
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+
+        // Example: Add a new row after some action
+        addProductRow();
+    </script>
+</body>
+</html>

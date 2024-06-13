@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>柏泰漢購物 | 商品頁</title>
+    <link rel="icon" href="../static/images/logo.ico" type="image/x-icon">
+    <style>
+        header {
+            background-color: #fff; /* 背景顏色 */
+            color: #000000; /* 文字顏色 */
+            padding: 20px; /* 內邊距 */
+            text-align: center; /* 文字置中 */
+            border-bottom: 2px solid #000000; /* 框底線 */
+            display: flex;
+            align-items: center; /* 垂直居中對齊 */
+        }
+        body {
+            margin: 0; /* 去除 body 元素的預設外邊距 */
+            padding: 0; /* 去除 body 元素的預設內邊距 */
+            font-family: Arial, sans-serif;
+        }
+        nav1 {
+            margin-left: auto; /* 使 nav 元素靠右對齊 */
+        }
+        nav1 a {
+            font-size: 20px; /* 文字大小 */
+            color: #000000; /* 分頁連結的文字顏色 */
+            text-decoration: none; /* 去除連結底線 */
+            margin-right: 25px; /* 分頁連結間的間距 */
+        }
+        nav1 a:hover {
+            color: red; /* 按鈕文字顏色 */
+        }
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+        .logo {
+            margin-right: 20px; /* 調整右邊距 */
+        }
+        nav {
+            width: 250px; /* 固定宽度 */
+            background-color: #f4f4f4;
+            padding: 25px;
+            position: relative; /* 設置相對定位 */
+        }
+        nav a {
+            font-size: 20px; /* 文字大小 */
+            color: #000000; /* 分頁連結的文字顏色 */
+            text-decoration: none; /* 去除連結底線 */
+            margin-right: 25px; /* 分頁連結間的間距 */
+        }
+        nav a:hover {
+            color: red; /* 按鈕文字顏色 */
+        }
+        .category-menu-dropdown {
+            position: relative; /* 让子菜单相对于父菜单定位 */
+        }
+
+        .child-menu {
+            display: none;
+            position: absolute;
+            top: 0; /* 垂直居中 */
+            left: 100%; /* 从右侧边缘弹出 */
+            background-color: #f4f4f4; /* 透明背景色 */
+            padding: 10px;
+            border: 1px solid #ccc;
+            z-index: 1;
+            white-space: nowrap; /* 防止文字换行 */
+        }
+        .category-menu-dropdown:hover .child-menu {
+            display: block; /* 鼠标悬停在父菜单上时显示子菜单 */
+        }
+        .slide img {
+            max-width: 100%; /* Set maximum width to prevent image overflow */
+        }
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .product {
+            flex: 0 1 calc(33.33% - 10px);
+            box-sizing: border-box;
+            border: 1px solid #000000;
+        }
+
+        .product-image img {
+            width:  100%;
+            height:  auto;
+            object-fit: cover;
+        }
+        .product-name {
+            font-size: 16px;
+            text-align: center; /* 使内容居中对齐 */
+        }
+        .product-price{
+            font-size: 24px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('index') }}">
+            <img src="../static/images/logo-2.png" alt="Logo" class="logo">
+        </a>
+        <a href="{{ url_for('index') }}">
+            <img src="../static/images/logo-1.png" alt="Logo" class="logo">
+        </a>
+        <nav1>
+            {% if account_number %}
+                <a href="{{ url_for('index') }}">回到首頁</a>
+                <a href="{{ url_for('member') }}">會員中心</a>
+                <a href="{{ url_for('cart') }}">查看購物車</a>
+                <a href="{{ url_for('logout') }}">登出帳號</a>
+            {% else %}
+                <a href="{{ url_for('index') }}">回到首頁</a>
+                <a href="{{ url_for('login') }}">登入</a>
+                <a href="{{ url_for('register') }}">註冊</a>
+            {% endif %}
+        </nav1>
+    </header>
+    <div class="container">
+        <div>
+            <nav>
+                <h1>商品選單</h1>
+                <ul class="parent-menu">
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='電腦主機') }}">電腦主機</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='電腦主機', brand='ACER_宏碁') }}">ACER_宏碁</a></li>
+                            <li><a href="{{ url_for('product', category='電腦主機', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                            <li><a href="{{ url_for('product', category='電腦主機', brand='MSI_微星') }}">MSI_微星</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='筆記型電腦') }}">筆記型電腦</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='ACER_宏碁') }}">ACER_宏碁</a></li>
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='MSI_微星') }}">MSI_微星</a></li>
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='LENOVO_聯想') }}">LENOVO_聯想</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='筆電配件') }}">筆電配件</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='筆電配件', brand='DR. BLUE LIGHT_藍光博士') }}">DR. BLUE LIGHT_藍光博士</a></li>
+                            <li><a href="{{ url_for('product', category='筆電配件', brand='Microsoft_微軟') }}">Microsoft_微軟</a></li>
+                            <li><a href="{{ url_for('product', category='筆電配件', brand='PC Park') }}">PC Park</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='主機板') }}">主機板</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='主機板', brand='GIGABYTE_技嘉') }}">GIGABYTE_技嘉</a></li>
+                            <li><a href="{{ url_for('product', category='主機板', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='顯示卡') }}">顯示卡</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='顯示卡', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                            <li><a href="{{ url_for('product', category='顯示卡', brand='GIGABYTE_技嘉') }}">GIGABYTE_技嘉</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='電源供應器') }}">電源供應器</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='電源供應器', brand='Link All') }}">Link All</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='硬碟') }}">硬碟</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='硬碟', brand='Micron_美光') }}">Micron_美光</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='鍵盤') }}">鍵盤</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='鍵盤', brand='FOXXRAY_狐鐳') }}">FOXXRAY_狐鐳</a></li>
+                            <li><a href="{{ url_for('product', category='鍵盤', brand='RaZER_雷蛇') }}">RaZER_雷蛇</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='滑鼠') }}">滑鼠</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='滑鼠', brand='Logitech_羅技') }}">Logitech_羅技</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='喇叭') }}">喇叭</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='喇叭', brand='Edifier_漫步者') }}">Edifier_漫步者</a></li>
+                            <li><a href="{{ url_for('product', category='喇叭', brand='OZAKI_阪京') }}">OZAKI_阪京</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+        <div class="product-container">
+            {% for item in data %}
+                <div class="product">
+                    <a href="{{ url_for('product_details_2', product_id=item.product_id) }}">
+                        <div class="product-image">
+                            <img src="{{ url_for('static', filename='images/' + item.product_id + '.jpg') }}" alt="{{ item.brand }}">
+                        </div>
+                        <div class="product-info">
+                            <p class="product-name">{{ item.model }}</p>
+                            <p class="product-price">$ {{ item.price }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="sidebar-right">
+            {% if account_number %}
+                <p style="text-align: center; font-weight: bold; font-size: 20px;">{{ account_number }}</p>
+                <p style="text-align: center; font-weight: bold; font-size: 15px;color: blue;">您好!</p>
+            {% else %}
+                <p style="text-align: center; font-weight: bold; font-size: 20px;">貴賓 您好!</p>
+                <p style="text-align: center; font-weight: bold; font-size: 15px;color: blue;">請登入</p>
+            {% endif %}
+            <p style="font-weight: bold;margin-left: 10px;">會員獨享</p>
+            <div style="display: flex; align-items: center; margin-left: 10px;">
+                <img src="../static/images/24hours.jpeg" style="width: 50px; height: 50px; margin-right: 10px;">
+                <p>24小時快速到貨</p>
+            </div>
+            <div style="display: flex; align-items: center; margin-left: 10px;">
+                <img src="../static/images/7.png" style="width: 50px; height: 60px; margin-right: 10px;">
+                <p>鑑賞期退貨保證</p>
+            </div>
+            <div style="display: flex; align-items: center; margin-left: 10px;">
+                <img src="../static/images/visa card.png" style="width: 50px; height: 55px; margin-right: 10px;">
+                <p>多元付款方式</p>
+            </div>
+            <div style="display: flex; align-items: center; margin-left: 10px;">
+                <img src="../static/images/0.jpg" style="width: 50px; height: 55px; margin-right: 10px;">
+                <p>銀行分期零利率</p>
+            </div>
+            <div class="slideshow2">
+                <div class="slide2">
+                    <img src="../static/images/小幻燈片-1.jpeg" alt="Slide 1" style="width: 230px; height: 120px;">
+                </div>
+                <div class="slide2">
+                    <img src="../static/images/小幻燈片-2.jpeg" alt="Slide 2" style="width: 230PX; height: 120px;">
+                </div>
+                <div class="slide2">
+                    <img src="../static/images/小幻燈片-3.jpeg" alt="Slide 3" style="width: 230px; height: 120px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropdowns = document.querySelectorAll('.category-menu-dropdown');
+
+            dropdowns.forEach(function(dropdown) {
+                dropdown.addEventListener('mouseenter', function() {
+                    const childMenu = dropdown.querySelector('.child-menu');
+                    childMenu.style.left = '100%'; // 设置子菜单从右侧边缘弹出
+                    childMenu.style.top = '50%'; // 垂直居中
+                    childMenu.style.transform = 'translateY(-50%)'; // 垂直居中对齐
+                    childMenu.style.display = 'block';
+                });
+
+                dropdown.addEventListener('mouseleave', function() {
+                    const childMenu = dropdown.querySelector('.child-menu');
+                    childMenu.style.display = 'none';
+                });
+            });
+        });
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.display = i === index ? 'block' : 'none';
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        setInterval(nextSlide, 5000); // 每5秒切換一次幻燈片
+
+        // 初始化顯示第一張幻燈片
+        showSlide(currentSlide);
+
+        let currentSlide2 = 0;
+        const slides2 = document.querySelectorAll('.slide2');
+
+        function showSlide2(index) {
+            slides2.forEach((slide2, i) => {
+                slide2.style.display = i === index ? 'block' : 'none';
+            });
+        }
+
+        function nextSlide2() {
+            currentSlide2 = (currentSlide2 + 1) % slides2.length;
+            showSlide2(currentSlide2);
+        }
+
+        setInterval(nextSlide2, 1000); // 每1秒切換一次幻燈片
+
+        // 初始化顯示第一張幻燈片
+        showSlide2(currentSlide2);
+    </script>
+    <footer>
+        <div class="footer-bottom">
+            &copy; 2024 柏泰漢購物 | 陳柏穎 林和泰 林政漢 版權所有。
+        </div>
+    </footer>
+</body>
+</html>

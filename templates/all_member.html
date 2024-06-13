@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員資料表</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>所有會員資料表</h2>
+    <table id="memberTable">
+        <thead>
+            <tr>
+                <th>帳號</th> <!-- 對應到 account_number -->
+                <th>密碼</th> <!-- 對應到 password -->
+                <th>電子郵件</th> <!-- 對應到 email -->
+                <th>名字</th> <!-- 對應到 username -->
+                <th>電話</th> <!-- 對應到 phone_number -->
+                <th>地址</th> <!-- 對應到 address -->
+                <th>出生日期</th> <!-- 對應到 date_of_birth -->
+                <th>是否為管理員</th> <!-- 對應到 administrator -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for members in all_member %}
+            <tr>
+                <td>{{ members[0] }}</td> <!-- 帳號 -->
+                <td>{{ members[1] }}</td> <!-- 密碼，显示为星号 -->
+                <td>{{ members[2] }}</td> <!-- 電子郵件 -->
+                <td>{{ members[3] }}</td> <!-- 名字 -->
+                <td>{{ members[4] }}</td> <!-- 電話 -->
+                <td>{{ members[5] }}</td> <!-- 地址 -->
+                <td>{{ members[6] }}</td> <!-- 出生日期 -->
+                <td>{{ '是' if members[7] == 'true' else '否' }}</td> <!-- 是否為管理員 -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

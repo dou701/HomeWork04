@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>柏泰漢購物 | 首頁隨機商品</title>
+    <style>
+        .product-container {
+            display: flex;
+            flex-wrap: wrap; /* 这将使得当产品数量超过容器宽度时，自动换行 */
+            justify-content: space-between; /* 这将使产品在容器中水平分布，与相邻元素间留有相同的空间 */
+            margin: 0 auto; /* 这将使容器在页面上水平居中 */
+            max-width: 1200px; /* 设置一个最大宽度来控制容器宽度 */
+            padding: 10px; /* 添加一些内边距以防止内容紧贴边缘 */
+        }
+
+        .product {
+            display: flex;
+            flex-direction: column; /* 使子元素垂直排列 */
+            justify-content: space-between;
+            width: calc(33.33% - 10px); /* 这将使每个产品占据父容器的 1/3 宽度，并留有一些间隙 */
+            margin-bottom: 20px; /* 这会在产品之间留下一些空白 */
+            border: 1px solid #000000;
+            box-sizing: border-box; /* 这将包含边框和内边距在宽度和高度的计算中 */
+            padding: 10px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .product-info {
+            margin-top: auto; /* 将其推到容器底部 */
+        }
+
+        .product-name {
+            font-size: 16px;
+            text-align: center; /* 使内容居中对齐 */
+        }
+        .product-price{
+            font-size: 24px;
+            color: red;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="product-container">
+        {% for item in data %}
+            <div class="product">
+                <a href="{{ url_for('product_details', product_id=item.product_id) }}">
+                    <div class="product-image">
+                        <img src="{{ url_for('static', filename='images/' + item.product_id + '.jpg') }}" alt="{{ item.brand }}">
+                    </div>
+                    <div class="product-info">
+                        <p class="product-name">{{ item.model }}</p>
+                        <p class="product-price">$ {{ item.price }}</p>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
