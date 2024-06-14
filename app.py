@@ -2,6 +2,7 @@ import datetime
 from flask import Flask, render_template, request, redirect, url_for, make_response
 import json
 import sqlite3
+from datetime import datetime
 
 app = Flask(__name__) # __name__ 代表目前執行的模組
 db_name = 'mydb.db'  # 資料庫預設名稱
@@ -220,45 +221,48 @@ def order():
     else:
         return render_template('login.html')  # 跳轉到登入畫面
 
-@app.route("/cart")
+@app.route("/cart", methods=['GET', 'POST'])  # 購物車
 def cart():
-    cart = request.cookies.get('cart')
-    if cart:
-        cart = json.loads(cart)
-        products = [{"name": item['model'], "price": item['price'], "quantity": item['quantity'], "total": item['total_amount'], "product_id": product_id} for product_id, item in cart.items()]
-        total_amount = sum(item['total_amount'] for item in cart.values())
-    else:
-        products = []
-        total_amount = 0
+    if request.method == 'POST':
+        cart = request.cookies.get('cart')
+        if cart:
+            cart = json.loads(cart)
+            products = [{"name": item['model'], "price": item['price'], "quantity": item['quantity'], "total": item['total_amount'], "product_id": product_id} for product_id, item in cart.items()]
+            id = request.cookies.get('account_number')  # 會員帳號
+            order_date = datetime.now()  # 取得目前日期時間
+            address = request.form['shipping_address']  # 輸入地址
 
-    return render_template('cart.html', products=products, total_amount=total_amount)
+            # 構造 product_str 和 count_str
+            product_ids = [str(product['product_id']) for product in products]
+            counts = [str(product['quantity']) for product in products]
 
-@app.route("/checkout", methods=["POST"])
-def checkout():
-    if request.method == "POST":
-        customer_id = 1  # 假設已登入的用戶ID
-        order_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        address = request.form.get('shipping_address')
-        products = request.form.getlist('products')
+            product_str = ','.join(product_ids)  # 例如: "1,3,4,6,6"
+            count_str = ','.join(counts)  # 例如: "2,1,3,1,4"
 
-        if not address:
-            return redirect(url_for('cart'))
+            conn = sqlite3.connect(db_name)
+            c = conn.cursor()
+            c.execute("INSERT INTO orders (customer_id, order_date, product, count, status, address) VALUES (?, ?, ?, ?, ?, ?)", (id, order_date, product_str, count_str, '已下單', address))
+            conn.commit()
+            conn.close()
 
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("INSERT INTO orders (customer_id, order_date, status, address) VALUES (?, ?, ?, ?)", (customer_id, order_date, '已下單', address))
-        order_id = cursor.lastrowid
-
-        for product in products:
-            product_id, quantity = product.split(',')
-            cursor.execute("INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)", (order_id, product_id, quantity))
-
-        conn.commit()
-        conn.close()
-        response = redirect(url_for('index'))
-        response.set_cookie('cart', '', expires=0)  # 清空購物車
-        return response
+            # 清空購物車
+            response = make_response(redirect(url_for('cart')))
+            response.set_cookie('cart', '', expires=0)  # 刪除購物車
+            return response
+        else:
+            products = []
+        return redirect(url_for('cart'))  # After processing POST request, redirect to GET request to avoid form resubmission.
+    
+    else:  # GET request
+        cart = request.cookies.get('cart')
+        if cart:
+            cart = json.loads(cart)
+            products = [{"name": item['model'], "price": item['price'], "quantity": item['quantity'], "total": item['total_amount'], "product_id": product_id} for product_id, item in cart.items()]
+            total_amount = sum(item['total_amount'] for item in cart.values())
+        else:
+            products = []
+            total_amount = 0
+        return render_template('cart.html', products=products, total_amount=total_amount, account_number=request.cookies.get('account_number'))
 
 @app.route("/administrator")  # 管理員介面
 def administrator():
@@ -318,14 +322,17 @@ def all_order():
         # 連接資料庫,查詢權限
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
-        cursor.execute("SELECT account_number,administrator FROM members WHERE account_number=?",(request.cookies.get('account_number'),))
+        cursor.execute("SELECT account_number, administrator FROM members WHERE account_number=?", (request.cookies.get('account_number'),))
         member = cursor.fetchone()  # 只需要取一条记录
+
         cursor.execute("SELECT * FROM orders")
-        all_product = cursor.fetchall()
+        all_order = cursor.fetchall()
+        print(all_order)
         cursor.close()
         conn.close()
+
         if member and member[1] == 'true':
-            return render_template('all_order.html')
+            return render_template('all_order.html', all_order=all_order)
         else:
             return render_template('index.html')
     return render_template('login.html')  # 跳轉到登入畫面
@@ -452,7 +459,7 @@ def product_details_2(product_id):
             cart[str(product_id)] = int(quantity)
 
         # Create response
-        resp = make_response(redirect(url_for('product_details_2', product_id=product_id)))
+        resp = make_response(redirect(url_for('product_details_2', product_id=product_id, account_number=request.cookies.get('account_number'))))
         resp.set_cookie('cart', json.dumps(cart), max_age=60*60*24*30)  # Expires in 30 days
 
         return resp
@@ -475,7 +482,7 @@ def product_details_2(product_id):
                 "description": product[6],
                 "specifications": product[7],
             }
-            return render_template('product_details_2.html', product=data)
+            return render_template('product_details_2.html', product=data, account_number=request.cookies.get('account_number'))
         else:
             return "Product not found", 404
 

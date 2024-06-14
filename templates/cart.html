@@ -161,7 +161,19 @@
             background-color: #cc0000; /* 深紅色背景 */
         }
         .sidebar-right {
-            margin-left: 20px;
+            float: right;
+            width: 250px; /* 設置適當的寬度 */
+            margin-left: 20px; /* 如果需要，設置左邊距 */
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
@@ -266,10 +278,9 @@
                 </ul>
             </nav>
         </div>
-        <div class="container">
+        <form method="post" action="{{ url_for('cart') }}">
             <div class="cart">
                 <h2>你的購物車</h2>
-                <form action="{{ url_for('checkout') }}" method="POST">
                     <table>
                         <thead>
                             <tr>
@@ -306,8 +317,10 @@
                             <button type="submit">結帳</button>
                         </div>
                     </div>
-                </form>
             </div>
+        </form>
+        <div class="container">
+            
         <div class="sidebar-right">
             {% if account_number %}
                 <p style="text-align: center; font-weight: bold; font-size: 20px;">{{ account_number }}</p>

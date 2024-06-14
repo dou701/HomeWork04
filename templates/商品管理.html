@@ -32,21 +32,23 @@
                 <th>庫存數量</th> <!-- 對應到 stock_quantity -->
                 <th>描述</th> <!-- 對應到 description -->
                 <th>規格</th> <!-- 對應到 specification -->
+                <th>管理員修改</th>
             </tr>
         </thead>
         <tbody>
-            {% for product in all_products %}
+            <!-- 初始的一行資料 -->
             <tr>
-                <td>{{ product[0] }}</td> <!-- Assume product ID is in the first column -->
-                <td>{{ product[1] }}</td> <!-- Category -->
-                <td>{{ product[2] }}</td> <!-- Brand -->
-                <td>{{ product[3] }}</td> <!-- Model -->
-                <td>{{ product[4] }}</td> <!-- Price -->
-                <td>{{ product[5] }}</td> <!-- Stock Quantity -->
-                <td>{{ product[6] }}</td> <!-- Description -->
-                <td>{{ product[7] }}</td> <!-- Specification -->
+                <td id="sort">000</td>
+                <td id="categoryCell">手機</td>
+                <td id="brandCell">品牌A</td>
+                <td id="modelCell">型號X</td>
+                <td id="priceCell">$1000</td>
+                <td id="stockCell">50</td>
+                <td id="descriptionCell">高性能智能手機</td>
+                <td id="specificationCell">6GB RAM, 128GB ROM</td>
+                <td><button onclick="editProduct()">修改</button></td>
             </tr>
-            {% endfor %}
+            <!-- 可以根據需要增加更多商品資料的行 -->
         </tbody>
     </table>
 
@@ -66,6 +68,19 @@
             // Calculate the next sort number
             var currentRowCount = tableBody.rows.length; // Current number of rows
             var nextSortNumber = pad(currentRowCount, 3); // Pad with zeros
+
+            // Add cells to the new row
+            newRow.innerHTML = `
+                <td>${nextSortNumber}</td>
+                <td>New Category</td>
+                <td>New Brand</td>
+                <td>New Model</td>
+                <td>New Price</td>
+                <td>New Stock</td>
+                <td>New Description</td>
+                <td>New Specification</td>
+                <td><button onclick="editProduct()">修改</button></td>
+            `;
 
             // Append the new row to the table body
             tableBody.appendChild(newRow);

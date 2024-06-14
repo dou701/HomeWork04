@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員資料表</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>所有會員資料表</h2>
+    <table id="memberTable">
+        <thead>
+            <tr>
+                <th>會員編號</th>
+                <th>帳號</th> <!-- 對應到 account_number -->
+                <th>密碼</th> <!-- 對應到 password -->
+                <th>電子郵件</th> <!-- 對應到 email -->
+                <th>名字</th> <!-- 對應到 username -->
+                <th>電話</th> <!-- 對應到 phone_number -->
+                <th>地址</th> <!-- 對應到 address -->
+                <th>出生日期</th> <!-- 對應到 date_of_birth -->
+                <th>是否為管理員</th> <!-- 對應到 administrator -->
+                <th>管理員修改</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 初始的一行資料 -->
+            <tr>
+                <td id="sort">000</td>
+                <td id="accountCell">初始者</td>
+                <td id="passwordCell">已設定為無法查閱及修改</td>
+                <td id="emailCell">abcdefg</td>
+                <td id="usernameCell">天字一號</td>
+                <td id="phoneCell">9527</td>
+                <td id="addressCell">銀河系天龍國</td>
+                <td id="dobCell">1990-01-01</td>
+                <td id="adminCell">是</td>
+                <td><button onclick="editMember()">修改</button></td>
+            </tr>
+            <!-- 可以根據需要增加更多會員資料的行 -->
+        </tbody>
+    </table>
+
+    <script>
+        function maskPassword() {
+            var passwordCell = document.getElementById('passwordCell');
+            passwordCell.textContent = '*'.repeat(passwordCell.textContent.length);
+        }
+
+        function editMember() {
+            // Replace this with your logic for redirecting to the edit page
+            alert('Redirect to edit page or show edit form');
+        }
+
+        // Function to add a new member row
+        function addMemberRow() {
+            var tableBody = document.querySelector('#memberTable tbody');
+
+            // Create a new row
+            var newRow = document.createElement('tr');
+
+            // Calculate the next sort number
+            var currentRowCount = tableBody.rows.length; // Current number of rows
+            var nextSortNumber = pad(currentRowCount, 3); // Pad with zeros
+
+            // Add cells to the new row
+            newRow.innerHTML = `
+                <td>${nextSortNumber}</td>
+                <td>New Account</td>
+                <td>New Password</td>
+                <td>New Email</td>
+                <td>New Username</td>
+                <td>New Phone</td>
+                <td>New Address</td>
+                <td>New Date</td>
+                <td>否</td>
+                <td><button onclick="editMember()">修改</button></td>
+            `;
+
+            // Append the new row to the table body
+            tableBody.appendChild(newRow);
+
+            // Update sort numbers for all rows
+            updateSortNumbers();
+        }
+
+        // Function to update sort numbers for all rows
+        function updateSortNumbers() {
+            var tableBody = document.querySelector('#memberTable tbody');
+            var rows = tableBody.querySelectorAll('tr');
+
+            // Loop through each row to update the sort number
+            rows.forEach((row, index) => {
+                var sortCell = row.querySelector('td:first-child');
+                sortCell.textContent = pad(index, 3);
+            });
+        }
+
+        // Helper function to pad numbers with zeros
+        function pad(num, size) {
+            var s = num + "";
+            while (s.length < size) s = "0" + s;
+            return s;
+        }
+
+        // Call the function to mask the password on page load
+        maskPassword();
+
+        // Example: Add a new row after some action
+        addMemberRow();
+    </script>
+</body>
+</html>
