@@ -211,13 +211,11 @@ def order():
         cursor = conn.cursor()
         cursor.execute("SELECT account_number,administrator FROM members WHERE account_number=?",(request.cookies.get('account_number'),))
         member = cursor.fetchall()[0]
-        data = {
-            "account_number": str(member[0]),
-            "administrator": member[1]
-        }
+        cursor.execute("SELECT * FROM orders WHERE customer_id=?",(request.cookies.get('account_number'),))
+        all_order = cursor.fetchall()
         cursor.close()
         conn.close()
-        return render_template('all_order.html',administrator=(lambda x: x if x == 'true' else None)(data['administrator']))
+        return render_template('all_order.html', all_order=all_order)
     else:
         return render_template('login.html')  # 跳轉到登入畫面
 
@@ -327,7 +325,6 @@ def all_order():
 
         cursor.execute("SELECT * FROM orders")
         all_order = cursor.fetchall()
-        print(all_order)
         cursor.close()
         conn.close()
 
