@@ -7,7 +7,8 @@
     <style>
         .product-details {
             border: 1px solid #000;
-            padding: 20px;
+            padding: 20px 20px 0px 20px;
+
             margin: 20px;
             max-width: 600px;
             margin: auto;
@@ -22,6 +23,21 @@
         .product-details div {
             margin: 10px 0;
         }
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 20px;
+        }
+        button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
@@ -35,11 +51,16 @@
         <div><strong>規格:</strong> {{ product.specifications }}</div>
         <div><strong>介紹:</strong> {{ product.description }}</div>
         <form action="{{ url_for('product_details', product_id=product.product_id) }}" method="POST">
-            <div>
-                <label for="quantity">數量:</label>
-                <input type="number" id="quantity" name="quantity" min="1" max="{{ product.stock_quantity }}" value="1">
+            <div class="form-actions">
+                <div>
+                    <label for="quantity">數量:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="{{ product.stock_quantity }}" value="1">
+                    <span style="color: red;">{{ message }}</span>
+                </div>
+                <div>
+                    <button type="submit">加入購物車</button>
+                </div>
             </div>
-            <button type="submit">加入購物車</button>
         </form>
     </div>
 </body>

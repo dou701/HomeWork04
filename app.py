@@ -32,17 +32,27 @@ def index():
     account_number = request.cookies.get('account_number')
     return render_template('index.html', data=data, account_number=account_number)
 
-@app.route('/exhibit', methods=['GET', 'POST'])  # 展示隨機商品
+@app.route('/exhibit', methods=['GET'])  # 展示商品
 def exhibit():
     #取得資料
+    category = request.args.get('category')
+    brand = request.args.get('brand', '')
+
+    # 取得資料
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("SELECT product_id,model,price FROM products ORDER by random() LIMIT 3")
-    member = cursor.fetchall()
+    if category:
+        if brand:
+            cursor.execute("SELECT product_id, model, price FROM products WHERE category=? AND brand=?", (category, brand))
+        else:
+            cursor.execute("SELECT product_id, model, price FROM products WHERE category=?", (category,))
+    else:
+        cursor.execute("SELECT product_id,model,price FROM products ORDER by random() LIMIT 3")
+    product = cursor.fetchall()
     cursor.close()
     conn.close()
     data = []
-    for row in member:
+    for row in product:
         data.append({
             "product_id": str(row[0]),
             "model": row[1],
@@ -115,7 +125,6 @@ def register():
             cursor.close()
             conn.close()
             return redirect(url_for('login'))
-
         cursor.close()
         conn.close()
         return render_template('register.html', error_message=error_message, form_data=member)
@@ -125,23 +134,23 @@ def register():
         else:
             return render_template('register.html', form_data={})
 
-@app.route('/member', methods=['GET', 'POST'])  # 會員中心
+@app.route('/member', methods=['GET'])  # 會員中心
 def member():
-        if request.cookies.get('account_number'):
-            # 連接資料庫,查詢權限
-            conn = sqlite3.connect(db_name)
-            cursor = conn.cursor()
-            cursor.execute("SELECT account_number,administrator FROM members WHERE account_number=?",(request.cookies.get('account_number'),))
-            member = cursor.fetchall()[0]
-            data = {
-                "account_number": str(member[0]),
-                "administrator": member[1]
-            }
-            cursor.close()
-            conn.close()
-            return render_template('member.html',administrator=(lambda x: x if x == 'true' else None)(data['administrator']))
-        else:
-            return render_template('login.html')  # 跳轉到登入畫面
+    if request.cookies.get('account_number'):  # 檢查是否登入
+        # 連接資料庫,查詢權限
+        conn = sqlite3.connect(db_name)
+        cursor = conn.cursor()
+        cursor.execute("SELECT account_number,administrator FROM members WHERE account_number=?",(request.cookies.get('account_number'),))
+        member = cursor.fetchall()[0]
+        data = {
+            "account_number": str(member[0]),
+            "administrator": member[1]
+        }
+        cursor.close()
+        conn.close()
+        return render_template('member.html',administrator=(lambda x: x if x == 'true' else None)(data['administrator']))
+    else:
+        return render_template('login.html')  # 跳轉到登入畫面
 
 @app.route('/member_info')  # 顯示會員資料
 def member_info():
@@ -250,7 +259,7 @@ def cart():
         else:
             products = []
         return redirect(url_for('cart'))  # After processing POST request, redirect to GET request to avoid form resubmission.
-    
+
     else:  # GET request
         cart = request.cookies.get('cart')
         if cart:
@@ -334,33 +343,13 @@ def all_order():
             return render_template('index.html')
     return render_template('login.html')  # 跳轉到登入畫面
 
-@app.route("/product", methods=['GET', 'POST'])  # 商品頁面
+@app.route("/product", methods=['GET'])  # 商品頁面
 def product():
     category = request.args.get('category')
     brand = request.args.get('brand', '')
-
-    # 取得資料
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-    if brand:
-        cursor.execute("SELECT product_id, model, price FROM products WHERE category=? AND brand=?", (category, brand))
-    else:
-        cursor.execute("SELECT product_id, model, price FROM products WHERE category=?", (category,))
-    member = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    data = []
-    for row in member:
-        data.append({
-            "product_id": str(row[0]),
-            "model": row[1],
-            "price": row[2],
-        })
-
     # 確認是否登入帳號
     account_number = request.cookies.get('account_number')
-    return render_template('product.html', data=data, account_number=account_number)
+    return render_template('product.html',category=category, brand=brand, account_number=account_number)
 
 
 @app.route("/product/<int:product_id>", methods=['GET', 'POST'])
@@ -407,14 +396,16 @@ def product_details(product_id):
             conn.close()
 
             # Create response with updated cart cookie
-            resp = make_response(redirect(url_for('product_details', product_id=product_id)))
+            resp = make_response(redirect(url_for('product_details', product_id=product_id, _external=True)))
             resp.set_cookie('cart', json.dumps(cart), max_age=60*60*24*30)  # Expires in 30 days
+
+            # Pass the success message
+            resp.set_cookie('message', '加入購物車成功!', max_age=1)
 
             return resp
         else:
             return "Product not found", 404
     else:
-        # Fetch product details from database for GET request
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM products WHERE product_id=?", (product_id,))
@@ -431,57 +422,14 @@ def product_details(product_id):
                 "description": product[6],
                 "specifications": product[7],
             }
-            return render_template('product_details.html', product=data)
+
+            # Check for the success message
+            message = request.cookies.get('message', '')
+
+            return render_template('product_details.html', product=data, message=message)
         else:
             return "Product not found", 404
 
-@app.route("/product_2/<int:product_id>", methods=['GET', 'POST'])  # 商品詳細內容
-def product_details_2(product_id):
-    if request.method == 'POST':
-        quantity = request.form.get('quantity')
-        if not quantity or int(quantity) <= 0:
-            return "Invalid quantity", 400
-
-        # Retrieve current cart from cookies
-        cart = request.cookies.get('cart')
-        if cart:
-            cart = json.loads(cart)
-        else:
-            cart = {}
-
-        # Update cart with the new product
-        if str(product_id) in cart:
-            cart[str(product_id)] += int(quantity)
-        else:
-            cart[str(product_id)] = int(quantity)
-
-        # Create response
-        resp = make_response(redirect(url_for('product_details_2', product_id=product_id, account_number=request.cookies.get('account_number'))))
-        resp.set_cookie('cart', json.dumps(cart), max_age=60*60*24*30)  # Expires in 30 days
-
-        return resp
-    else:
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM products WHERE product_id=?", (product_id,))
-        product = cursor.fetchone()
-        cursor.close()
-        conn.close()
-
-        if product:
-            data = {
-                "product_id": str(product[0]),
-                "category": product[1],
-                "brand": product[2],
-                "model": product[3],
-                "price": product[4],
-                "stock_quantity": product[5],
-                "description": product[6],
-                "specifications": product[7],
-            }
-            return render_template('product_details_2.html', product=data, account_number=request.cookies.get('account_number'))
-        else:
-            return "Product not found", 404
 
 @app.route('/logout')
 def logout():

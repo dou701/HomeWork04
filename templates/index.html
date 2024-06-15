@@ -75,20 +75,24 @@
         .slide img {
             max-width: 100%; /* Set maximum width to prevent image overflow */
         }
+        .slideshow {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        iframe {
+            width: 100%;
+        }
         .product-container {
+            width: 100%;
             height: auto;
         }
-
-        .product {
-            width: calc(33.33% - 10px); /* 这将使每个产品占据父容器的 1/3 宽度，并留有一些间隙 */
-            margin-bottom: 20px; /* 这会在产品之间留下一些空白 */
-            border: 1px solid #000000;
-        }
-
-        .product-image img {
-            width:  100%;
-            height:  auto;
-            object-fit: cover;
+        .slide {
+            margin:0 auto;
         }
     </style>
 </head>
@@ -114,99 +118,99 @@
         </nav1>
     </header>
     <div class="container">
-    <div>
-        <nav>
-            <h1>商品選單</h1>
-            <ul class="parent-menu">
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='電腦主機') }}">電腦主機</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='電腦主機', brand='ACER_宏碁') }}">ACER_宏碁</a></li>
-                        <li><a href="{{ url_for('product', category='電腦主機', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
-                        <li><a href="{{ url_for('product', category='電腦主機', brand='MSI_微星') }}">MSI_微星</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='筆記型電腦') }}">筆記型電腦</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='筆記型電腦', brand='ACER_宏碁') }}">ACER_宏碁</a></li>
-                        <li><a href="{{ url_for('product', category='筆記型電腦', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
-                        <li><a href="{{ url_for('product', category='筆記型電腦', brand='MSI_微星') }}">MSI_微星</a></li>
-                        <li><a href="{{ url_for('product', category='筆記型電腦', brand='LENOVO_聯想') }}">LENOVO_聯想</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='筆電配件') }}">筆電配件</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='筆電配件', brand='DR. BLUE LIGHT_藍光博士') }}">DR. BLUE LIGHT_藍光博士</a></li>
-                        <li><a href="{{ url_for('product', category='筆電配件', brand='Microsoft_微軟') }}">Microsoft_微軟</a></li>
-                        <li><a href="{{ url_for('product', category='筆電配件', brand='PC Park') }}">PC Park</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='主機板') }}">主機板</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='主機板', brand='GIGABYTE_技嘉') }}">GIGABYTE_技嘉</a></li>
-                        <li><a href="{{ url_for('product', category='主機板', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='顯示卡') }}">顯示卡</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='顯示卡', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
-                        <li><a href="{{ url_for('product', category='顯示卡', brand='GIGABYTE_技嘉') }}">GIGABYTE_技嘉</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='電源供應器') }}">電源供應器</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='電源供應器', brand='Link All') }}">Link All</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='硬碟') }}">硬碟</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='硬碟', brand='Micron_美光') }}">Micron_美光</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='鍵盤') }}">鍵盤</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='鍵盤', brand='FOXXRAY_狐鐳') }}">FOXXRAY_狐鐳</a></li>
-                        <li><a href="{{ url_for('product', category='鍵盤', brand='RaZER_雷蛇') }}">RaZER_雷蛇</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='滑鼠') }}">滑鼠</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='滑鼠', brand='Logitech_羅技') }}">Logitech_羅技</a></li>
-                    </ul>
-                </li>
-                <li class="category-menu-dropdown">
-                    <a href="{{ url_for('product', category='喇叭') }}">喇叭</a>
-                    <ul class="child-menu">
-                        <li><a href="{{ url_for('product', category='喇叭', brand='Edifier_漫步者') }}">Edifier_漫步者</a></li>
-                        <li><a href="{{ url_for('product', category='喇叭', brand='OZAKI_阪京') }}">OZAKI_阪京</a></li>
-                    </ul>
-                </li>
-        </ul>
-        </nav>
-    </div>
-    <div class="slideshow">
-        <div class="slide">
-            <img src="../static/images/勤益-1.jpeg" alt="Slide 1">
-        </div>
-        <div class="slide">
-            <img src="../static/images/勤益-2.jpeg" alt="Slide 2">
-        </div>
-        <div class="slide">
-            <img src="../static/images/勤益-3.jpeg" alt="Slide 3">
-        </div>
-        <div class="product-container">
-            <embed src="{{ url_for('exhibit') }}" width=100% height="1000"></embed>
-        </div>
-    </div>
+        <div>
+            <nav>
+                <h1>商品選單</h1>
+                <ul class="parent-menu">
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='電腦主機') }}">電腦主機</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='電腦主機', brand='ACER_宏碁') }}">ACER_宏碁</a></li>
+                            <li><a href="{{ url_for('product', category='電腦主機', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                            <li><a href="{{ url_for('product', category='電腦主機', brand='MSI_微星') }}">MSI_微星</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='筆記型電腦') }}">筆記型電腦</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='ACER_宏碁') }}">ACER_宏碁</a></li>
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='MSI_微星') }}">MSI_微星</a></li>
+                            <li><a href="{{ url_for('product', category='筆記型電腦', brand='LENOVO_聯想') }}">LENOVO_聯想</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='筆電配件') }}">筆電配件</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='筆電配件', brand='DR. BLUE LIGHT_藍光博士') }}">DR. BLUE LIGHT_藍光博士</a></li>
+                            <li><a href="{{ url_for('product', category='筆電配件', brand='Microsoft_微軟') }}">Microsoft_微軟</a></li>
+                            <li><a href="{{ url_for('product', category='筆電配件', brand='PC Park') }}">PC Park</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='主機板') }}">主機板</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='主機板', brand='GIGABYTE_技嘉') }}">GIGABYTE_技嘉</a></li>
+                            <li><a href="{{ url_for('product', category='主機板', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='顯示卡') }}">顯示卡</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='顯示卡', brand='ASUS_華碩') }}">ASUS_華碩</a></li>
+                            <li><a href="{{ url_for('product', category='顯示卡', brand='GIGABYTE_技嘉') }}">GIGABYTE_技嘉</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='電源供應器') }}">電源供應器</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='電源供應器', brand='Link All') }}">Link All</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='硬碟') }}">硬碟</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='硬碟', brand='Micron_美光') }}">Micron_美光</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='鍵盤') }}">鍵盤</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='鍵盤', brand='FOXXRAY_狐鐳') }}">FOXXRAY_狐鐳</a></li>
+                            <li><a href="{{ url_for('product', category='鍵盤', brand='RaZER_雷蛇') }}">RaZER_雷蛇</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='滑鼠') }}">滑鼠</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='滑鼠', brand='Logitech_羅技') }}">Logitech_羅技</a></li>
+                        </ul>
+                    </li>
+                    <li class="category-menu-dropdown">
+                        <a href="{{ url_for('product', category='喇叭') }}">喇叭</a>
+                        <ul class="child-menu">
+                            <li><a href="{{ url_for('product', category='喇叭', brand='Edifier_漫步者') }}">Edifier_漫步者</a></li>
+                            <li><a href="{{ url_for('product', category='喇叭', brand='OZAKI_阪京') }}">OZAKI_阪京</a></li>
+                        </ul>
+                    </li>
 
+                </ul>
+            </nav>
+        </div>
+        <div class="slideshow" id="slideshow">
+            <div class="slide">
+                <img src="../static/images/勤益-1.jpeg" alt="Slide 1">
+            </div>
+            <div class="slide">
+                <img src="../static/images/勤益-2.jpeg" alt="Slide 2">
+            </div>
+            <div class="slide">
+                <img src="../static/images/勤益-3.jpeg" alt="Slide 3">
+            </div>
+            <div class="product-container">
+                <iframe src="{{ url_for('exhibit') }}" id="iframeContent"  frameborder="0"></iframe>
+            </div>
+        </div>
         <div class="sidebar-right">
             {% if account_number %}
                 <p style="text-align: center; font-weight: bold; font-size: 20px;">{{ account_number }}</p>
@@ -215,7 +219,7 @@
                 <p style="text-align: center; font-weight: bold; font-size: 20px;">貴賓 您好!</p>
                 <p style="text-align: center; font-weight: bold; font-size: 15px;color: blue;">請登入</p>
             {% endif %}
-                <p style="font-weight: bold;margin-left: 10px;">會員獨享</p>
+            <p style="font-weight: bold;margin-left: 10px;">會員獨享</p>
             <div style="display: flex; align-items: center; margin-left: 10px;">
                 <img src="../static/images/24hours.jpeg" style="width: 50px; height: 50px; margin-right: 10px;">
                 <p>24小時快速到貨</p>
@@ -248,23 +252,24 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-    const dropdowns = document.querySelectorAll('.category-menu-dropdown');
+            const dropdowns = document.querySelectorAll('.category-menu-dropdown');
 
-    dropdowns.forEach(function(dropdown) {
-        dropdown.addEventListener('mouseenter', function() {
-            const childMenu = dropdown.querySelector('.child-menu');
-            childMenu.style.left = '100%'; // 设置子菜单从右侧边缘弹出
-            childMenu.style.top = '50%'; // 垂直居中
-            childMenu.style.transform = 'translateY(-50%)'; // 垂直居中对齐
-            childMenu.style.display = 'block';
+            dropdowns.forEach(function(dropdown) {
+                dropdown.addEventListener('mouseenter', function() {
+                    const childMenu = dropdown.querySelector('.child-menu');
+                    childMenu.style.left = '100%'; // 设置子菜单从右侧边缘弹出
+                    childMenu.style.top = '50%'; // 垂直居中
+                    childMenu.style.transform = 'translateY(-50%)'; // 垂直居中对齐
+                    childMenu.style.display = 'block';
+                });
+
+                dropdown.addEventListener('mouseleave', function() {
+                    const childMenu = dropdown.querySelector('.child-menu');
+                    childMenu.style.display = 'none';
+                });
+            });
         });
 
-        dropdown.addEventListener('mouseleave', function() {
-            const childMenu = dropdown.querySelector('.child-menu');
-            childMenu.style.display = 'none';
-        });
-    });
-});
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
 
@@ -279,10 +284,11 @@
             showSlide(currentSlide);
         }
 
-        setInterval(nextSlide, 5000); // 每3秒切換一次幻燈片
+        setInterval(nextSlide, 5000); // 每5秒切換一次幻燈片
 
         // 初始化顯示第一張幻燈片
         showSlide(currentSlide);
+
         let currentSlide2 = 0;
         const slides2 = document.querySelectorAll('.slide2');
 
@@ -297,38 +303,17 @@
             showSlide2(currentSlide2);
         }
 
-        setInterval(nextSlide2, 1000); // 每5秒切換一次幻燈片
+        setInterval(nextSlide2, 1000); // 每1秒切換一次幻燈片
 
         // 初始化顯示第一張幻燈片
         showSlide2(currentSlide2);
 
-        // 获取所有商品元素
-const products = document.querySelectorAll('.product');
+        var iframe = document.getElementById("iframeContent");
 
-// 遍历每个商品元素
-products.forEach(product => {
-    // 获取商品图片元素
-    const image = product.querySelector('.product-image img');
-    const imageUrl = image ? image.getAttribute('src') : '';
-
-    // 获取商品名称元素
-    const nameElement = product.querySelector('.product-name');
-    const name = nameElement ? nameElement.textContent : '';
-
-    // 获取商品价格元素
-    const priceElement = product.querySelector('.product-price');
-    const price = priceElement ? priceElement.textContent : '';
-
-    // 获取商品链接元素
-    const linkElement = product.querySelector('.product-link');
-    const link = linkElement ? linkElement.getAttribute('href') : '';
-
-    // 打印提取的信息（这里可以根据需要进行其他处理，比如展示在页面上）
-    console.log('Image URL:', imageUrl);
-    console.log('Product Name:', name);
-    console.log('Product Price:', price);
-    console.log('Product Link:', link);
-});
+        // Adjusting the iframe height onload event
+        iframe.onload = function () {
+            iframe.style.height = iframe.contentWindow.document.body.scrollHeight+30 + 'px';
+        }
     </script>
     <footer>
         <div class="footer-bottom">

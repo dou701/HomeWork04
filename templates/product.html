@@ -76,31 +76,16 @@
             max-width: 100%; /* Set maximum width to prevent image overflow */
         }
         .product-container {
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             justify-content: space-between;
             padding: 20px;
         }
-
-        .product {
-            flex: 0 1 calc(33.33% - 10px);
-            box-sizing: border-box;
-            border: 1px solid #000000;
-        }
-
-        .product-image img {
-            width:  100%;
-            height:  auto;
-            object-fit: cover;
-        }
-        .product-name {
-            font-size: 16px;
-            text-align: center; /* 使内容居中对齐 */
-        }
-        .product-price{
-            font-size: 24px;
-            color: red;
+        iframe {
+            width: 100%;
         }
     </style>
 </head>
@@ -201,24 +186,11 @@
                             <li><a href="{{ url_for('product', category='喇叭', brand='OZAKI_阪京') }}">OZAKI_阪京</a></li>
                         </ul>
                     </li>
-
                 </ul>
             </nav>
         </div>
-        <div class="product-container">
-            {% for item in data %}
-                <div class="product">
-                    <a href="{{ url_for('product_details_2', product_id=item.product_id) }}">
-                        <div class="product-image">
-                            <img src="{{ url_for('static', filename='images/' + item.product_id + '.jpg') }}" alt="{{ item.brand }}">
-                        </div>
-                        <div class="product-info">
-                            <p class="product-name">{{ item.model }}</p>
-                            <p class="product-price">$ {{ item.price }}</p>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
+        <div class="product-container" id="product-container">
+            <iframe src="{{ url_for('exhibit', category=category, brand=brand) }}" id="iframeContent"  frameborder="0"></iframe>
         </div>
         <div class="sidebar-right">
             {% if account_number %}
@@ -316,6 +288,13 @@
 
         // 初始化顯示第一張幻燈片
         showSlide2(currentSlide2);
+
+        var iframe = document.getElementById("iframeContent");
+
+        // Adjusting the iframe height onload event
+        iframe.onload = function () {
+            iframe.style.height = iframe.contentWindow.document.body.scrollHeight+20 + 'px';
+        }
     </script>
     <footer>
         <div class="footer-bottom">
