@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂單查詢</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>訂單查詢</h2>
+    {% if admin_mode %}
+        <form class="filter-section" method="POST" action="/all_order">
+            <label for="orderNumber">訂單編號:</label>
+            <input id="orderNumber" type="text" name="orderNumber" placeholder="輸入訂單編號">
+            <label for="orderDate">日期查詢:</label>
+            <input type="date" id="orderDate" name="orderDate">
+            <label for="member">會員查詢:</label>
+            <input id="member" type="text" name="member" placeholder="輸入會員名稱">
+            <button type="submit">查詢</button>
+        </form>
+    {% else %}
+        <form class="filter-section" method="POST" action="/order">
+            <label for="orderNumber">訂單編號:</label>
+            <input id="orderNumber" type="text" name="orderNumber" placeholder="輸入訂單編號">
+            <label for="orderDate">日期查詢:</label>
+            <input type="date" id="orderDate" name="orderDate">
+            <button type="submit">查詢</button>
+        </form>
+    {% endif %}
+
+    <table id="orderTable">
+        <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>訂購日期</th>
+                <th>會員名稱</th>
+                <th>產品名稱</th>
+                <th>數量</th>
+                <th>狀態</th>
+                {% if admin_mode %}
+                    <th>修改</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in data %}
+            <tr>
+                <td>{{ order[0] }}</td>
+                <td>{{ order[2] }}</td>
+                <td>{{ order[1] }}</td>
+                <td>{{ order[3] }}</td>
+                <td>{{ order[4] }}</td>
+                <td>{{ order[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

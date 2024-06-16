@@ -181,7 +181,7 @@
         </a>
         <nav1>
             <a href="{{ url_for('index') }}">回到首頁</a>
-            <a href="{{ url_for('index') }}">購物車</a>
+            <a href="{{ url_for('cart') }}">查看購物車</a>
             {% if administrator %}
                 <a href="{{ url_for('administrator') }}">管理員介面</a>
             {% endif %}
@@ -189,7 +189,7 @@
     </header>
     <div class="flex-container">
         <div class="product-container">
-            <embed id="embedFrame" src="{{ url_for('member_info') }}" width="100%" height="1000"></embed>
+            <iframe id="embedFrame" src="{{ url_for('member_info') }}" frameborder="0" width="100%" height="1000"></iframe>
         </div>
         <div class="box">
             <a>歡迎您! 您本次登入IP為 : <span id="ipAddress"></span></a>
@@ -214,7 +214,7 @@
             <br>
             <div style="display: flex; flex-direction: row;">
                 <a id="memberInfoBtn" href="javascript:void(0);" class="btn2" onclick="updateEmbed('{{ url_for('member_info') }}')">會員資料</a>
-                <a id="editBtn" href="javascript:void(0);" class="btn2" onclick="updateEmbed('{{ url_for('edit') }}')">變更資料</a>
+                <a id="editBtn" href="javascript:void(0);" class="btn2" onclick="updateEmbed('{{ url_for('member_edit') }}')">變更資料</a>
                 <a id="orderQueryBtn" href="javascript:void(0);" class="btn2" onclick="updateEmbed('{{ url_for('order') }}')">訂單查詢</a>
             </div>
             <br>

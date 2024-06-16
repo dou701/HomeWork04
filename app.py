@@ -154,7 +154,7 @@ def member():
 
 @app.route('/member_info')  # 顯示會員資料
 def member_info():
-    #取得所有資料
+    if request.cookies.get('account_number'):  # 檢查是否登入
     # 連接資料庫,查詢權限
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
@@ -172,28 +172,30 @@ def member_info():
         cursor.close()
         conn.close()
         return render_template('member_info.html', member=data)
+    else:
+        return render_template('login.html')  # 跳轉到登入畫面
 
-@app.route('/edit', methods=['GET', 'POST'])  # 變更會員資料
-def edit():
-    success=''
-    if request.method == 'POST':
-        password = request.form['password']
-        username = request.form['username']
-        email = request.form['email']
-        phone_number = request.form['phone_number']
-        address = request.form['address']
-        date_of_birth = request.form['date_of_birth']
+@app.route('/member_edit', methods=['GET', 'POST'])  # 變更會員資料
+def member_edit():
+    if request.cookies.get('account_number'):  # 檢查是否登入
+        success=''
+        if request.method == 'POST':
+            password = request.form['password']
+            username = request.form['username']
+            email = request.form['email']
+            phone_number = request.form['phone_number']
+            address = request.form['address']
+            date_of_birth = request.form['date_of_birth']
 
-        # 連接資料庫，更新資料
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
-        cursor.execute("UPDATE members SET password=?,email=?,username=?,phone_number=?,address=?,date_of_birth=? WHERE account_number=?", (password, email, username, phone_number, address, date_of_birth, request.cookies.get('account_number')))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        success = '變更資料成功！'
+            # 連接資料庫，更新資料
+            conn = sqlite3.connect(db_name)
+            cursor = conn.cursor()
+            cursor.execute("UPDATE members SET password=?,email=?,username=?,phone_number=?,address=?,date_of_birth=? WHERE account_number=?", (password, email, username, phone_number, address, date_of_birth, request.cookies.get('account_number')))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            success = '變更資料成功！'
 
-    if request.cookies.get('account_number'):
         # 連接資料庫
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
@@ -210,7 +212,9 @@ def edit():
         }
         cursor.close()
         conn.close()
-        return render_template('edit.html', member=data, success=success)
+        return render_template('member_edit.html', member=data, success=success)
+    else:
+        return render_template('login.html')  # 跳轉到登入畫面
 
 @app.route('/order', methods=['GET', 'POST'])  # 訂單查詢
 def order():
@@ -218,15 +222,31 @@ def order():
         # 連接資料庫
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
-        cursor.execute("SELECT account_number,administrator FROM members WHERE account_number=?",(request.cookies.get('account_number'),))
-        member = cursor.fetchall()[0]
-        cursor.execute("SELECT * FROM orders WHERE customer_id=?",(request.cookies.get('account_number'),))
-        all_order = cursor.fetchall()
+
+        # 基本查詢語句
+        query = "SELECT * FROM orders WHERE customer_id=?"
+        params = [request.cookies.get('account_number')]
+
+        # 檢查查詢條件並添加到查詢語句中
+        if request.method == 'POST':
+            order_number = request.form.get('orderNumber')
+            order_date = request.form.get('orderDate')
+
+            if order_number:
+                query += " AND order_id=?"
+                params.append(order_number)
+            if order_date:
+                query += " AND order_date=?"
+                params.append(order_date)
+
+        cursor.execute(query, params)
+        data = cursor.fetchall()
         cursor.close()
         conn.close()
-        return render_template('all_order.html', all_order=all_order)
+        return render_template('order.html', data=data)
     else:
         return render_template('login.html')  # 跳轉到登入畫面
+
 
 @app.route("/cart", methods=['GET', 'POST'])  # 購物車
 def cart():
@@ -236,7 +256,7 @@ def cart():
             cart = json.loads(cart)
             products = [{"name": item['model'], "price": item['price'], "quantity": item['quantity'], "total": item['total_amount'], "product_id": product_id} for product_id, item in cart.items()]
             id = request.cookies.get('account_number')  # 會員帳號
-            order_date = datetime.now()  # 取得目前日期時間
+            order_date = datetime.now().strftime('%Y-%m-%d')  # 取得目前日期時間
             address = request.form['shipping_address']  # 輸入地址
 
             # 構造 product_str 和 count_str
@@ -323,7 +343,7 @@ def all_product():
             return render_template('index.html')
     return render_template('login.html')  # 跳轉到登入畫面
 
-@app.route("/all_order")  # 管理員介面 - 所有訂單
+@app.route("/all_order", methods=['GET', 'POST'])  # 管理員介面 - 所有訂單
 def all_order():
     if request.cookies.get('account_number'):
         # 連接資料庫,查詢權限
@@ -331,14 +351,31 @@ def all_order():
         cursor = conn.cursor()
         cursor.execute("SELECT account_number, administrator FROM members WHERE account_number=?", (request.cookies.get('account_number'),))
         member = cursor.fetchone()  # 只需要取一条记录
-
-        cursor.execute("SELECT * FROM orders")
-        all_order = cursor.fetchall()
-        cursor.close()
-        conn.close()
-
         if member and member[1] == 'true':
-            return render_template('all_order.html', all_order=all_order)
+            # 基本查詢語句
+            query = "SELECT * FROM orders WHERE 1=1"
+            params = []
+            # 檢查查詢條件並添加到查詢語句中
+            if request.method == 'POST':
+                order_number = request.form.get('orderNumber')
+                order_date = request.form.get('orderDate')
+                member = request.form.get('member')
+                if order_number:
+                    query += " AND order_id=?"
+                    params.append(order_number)
+                if order_date:
+                    query += " AND order_date=?"
+                    params.append(order_date)
+                if member:
+                    query += " AND customer_id=?"
+                    params.append(member)
+
+            print(query)
+            cursor.execute(query, params)
+            data = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            return render_template('order.html', data=data, admin_mode=True)
         else:
             return render_template('index.html')
     return render_template('login.html')  # 跳轉到登入畫面
