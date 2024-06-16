@@ -250,7 +250,9 @@ def order():
 
 @app.route("/cart", methods=['GET', 'POST'])  # 購物車
 def cart():
+    message = request.args.get('message', '')
     if request.method == 'POST':
+
         cart = request.cookies.get('cart')
         if cart:
             cart = json.loads(cart)
@@ -263,8 +265,8 @@ def cart():
             product_ids = [str(product['product_id']) for product in products]
             counts = [str(product['quantity']) for product in products]
 
-            product_str = ','.join(product_ids)  # 例如: "1,3,4,6,6"
-            count_str = ','.join(counts)  # 例如: "2,1,3,1,4"
+            product_str = ','.join(product_ids)
+            count_str = ','.join(counts)
 
             conn = sqlite3.connect(db_name)
             c = conn.cursor()
@@ -273,7 +275,7 @@ def cart():
             conn.close()
 
             # 清空購物車
-            response = make_response(redirect(url_for('cart')))
+            response = make_response(redirect(url_for('cart', message="訂購成功!")))
             response.set_cookie('cart', '', expires=0)  # 刪除購物車
             return response
         else:
@@ -289,7 +291,7 @@ def cart():
         else:
             products = []
             total_amount = 0
-        return render_template('cart.html', products=products, total_amount=total_amount, account_number=request.cookies.get('account_number'))
+        return render_template('cart.html', products=products, total_amount=total_amount, account_number=request.cookies.get('account_number'), message=message)
 
 @app.route("/administrator")  # 管理員介面
 def administrator():

@@ -308,7 +308,7 @@
                             <tbody>
                                 {% for product in products %}
                                 <tr>
-                                    <td>{{ product.name }}</td>
+                                    <td><a href="{{ url_for('product_details', product_id=product.product_id) }}">{{ product.name }}</a></td>
                                     <td>${{ product.price }}</td>
                                     <td>{{ product.quantity }}</td>
                                     <td>${{ product.total }}</td>
@@ -327,6 +327,7 @@
                         <div class="button-container">
                             <div class="modify-button">
                                 <a href="{{ url_for('index') }}"><button type="button">我還要加點</button></a>
+                                <span style="color: red;">{{ message }}</span>
                             </div>
                             <div class="cart-buttons">
                                 <button type="submit">結帳</button>
